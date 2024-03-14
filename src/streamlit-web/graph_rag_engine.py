@@ -12,7 +12,7 @@ from llama_index.core.retrievers import VectorIndexRetriever, KGTableRetriever
 from retrievers.retrieval import CustomRetriever
 from data_loader.load_from_dir import rebuild_index
 
-from nebula_graph.nebula_operations import show_hosts, add_hosts_if_not_available, show_spaces, init_nebula_cluster
+#from nebula_graph.nebula_operations import show_hosts, add_hosts_if_not_available, show_spaces, init_nebula_cluster
 from nebula_graph.text_2_graph import df_to_fig, extract_triplets, get_response_n_kg_rel_query
 
 #from llama_index.core import Document
