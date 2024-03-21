@@ -70,7 +70,7 @@ def build_graph_rag_engine():
 
     logger.info('loading llm and embed_model...')
     embed_model = get_embed_model(model_name=os.environ['embed_path'],  model_kwargs={'device': 'cpu'}, encode_kwargs = {'normalize_embeddings': True})
-    #llm = MyLLM(pretrained_model_name_or_path=os.environ['llm_path'], device_map="mps", context_window=4096, num_output=512, model_name='chatglm3-6b')
+
     llm = OpenAI()
 
 

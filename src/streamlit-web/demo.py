@@ -7,7 +7,6 @@ sys.path.append("..")
 from nebula_graph.text_2_graph import df_to_fig, extract_triplets, get_response_n_kg_rel_query
 ################Import Modules##################
 from engine_types import table, document_agent, kgi
-from table_engine import build_table_n_text_engine
 from document_agent_engine import build_doc_agent_engine
 from graph_rag_engine import build_graph_rag_engine
 ################################################
@@ -82,21 +81,21 @@ with st.sidebar:
         "1. LLM: gpt-3.5-turbo \n"
         "2. Embeddings: moka-ai/m3e-base"
         "`(适用场景：中文为主、少量英文｜不适合代码检索场景)`\n"
-        "3. Document(s): KDP-WhitePaper.md"
-        "`(文本特征：偏通用型、含有少量`:blue[table]`、不含`:blue[code block]`)` \n"
+        "3. Document(s): 《中国南方电网有限责任公司电力安全工作规程》\n"
+        "`(其中document agent使用了1～4部分的文档，graph rag使用了第2部分的文档) \n`"
+
     )
 
-st.header("Check out what's inside KDP Whitepaper:books:")
+st.header("电力安全工作规程Q&A（演示）:books:")
 
 
 
-engine = st.selectbox("query engine", (table, document_agent, kgi))
+engine = st.selectbox("query engine", (document_agent, kgi))
 
 
-if engine == table:
-    st.session_state.chat_engine = build_table_n_text_engine()
+
     
-elif engine== document_agent:
+if engine== document_agent:
     st.session_state.chat_engine = build_doc_agent_engine()
     
 else:
