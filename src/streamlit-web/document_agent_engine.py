@@ -44,13 +44,13 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(
 # Create a logger
 logger = logging.getLogger(__name__)
 
-mappings = {
-    '第一部分': '公共规则：范围、规范性饮用文件、属于和定义、总则、作业基本条件及要求、保证安全的组织措施、保证安全的技术措施、设备巡视、设备操作',
-    '第二部分': '常规作业：单一类型作业、带电作业、邻近带点体作业、二次设备作业、架空线路作业、电力电缆作业、高/低压配电网作业',
-    '第三部分': '专项作业：试验作业、电气测量作业、水轮机作业、高处作业、密封空间作业、水域作业、焊接及切割作业、动火作业、起重与运输',
-    '第四部分': '工器具：安全工器具、带电作业工具、施工机具、电器工具及一般工具',
-}
 
+
+
+#format md as DF
+df = split_by_md_headers('../../data/RAG-塞尔达王国之泪材料.md')
+#construct node mappings
+key_words, docs = MDDF(df, [1]).construct_node_mappings(show_progress=False)#remove useless contents
 
 @st.cache_resource
 def build_doc_agent_engine(similarity_top_k=2): #key_words, docs=None, 
@@ -61,27 +61,29 @@ def build_doc_agent_engine(similarity_top_k=2): #key_words, docs=None,
     service_context = ServiceContext.from_defaults(llm=llm, embed_model=embed_model)
 
 
-    logger.info('loading prompt...')
-    #load prompt
-    prompt_str = load_prompt('../../prompt_bank/safety_practice.txt')
-    new_vector_tmpl = PromptTemplate(prompt_str)
+
 
 
     logger.info('building doc agent for each doc')
     ##Build Document Agent for each Document
-    num_docs = 4#len(documents)
-
+    
     #build agents dict
     agents = {}
     nodes = []
-    for i in range(num_docs):
-        
+    for i, kw in enumerate(key_words):
+
+        #build vector index--first time
+        #vector_index = VectorStoreIndex(docs[kw], embed_model=embed_model)
+        #vector_index.storage_context.persist(persist_dir="db_stores/doc_agent_vector_index")
+
         #load from disk
         vector_index = rebuild_index(persist_dir=f'../../db_stores/doc_agent_vector_index/idx_{i}', service_context=service_context)
-        fn = list(vector_index.ref_doc_info.values())[0].metadata['file_name'].split('.')[0]
 
 
-
+        #build keyword indexfirst time
+        #kw_index = KeywordTableIndex.from_docunments(docs[kw])
+        #summary_index = SummaryIndex(docs[kw], embed_model=embed_model)
+        #summary_index.storage_context.persist(persist_dir="db_stores/doc_agent_summary_index")
 
         #load from disk
         summary_index = rebuild_index(persist_dir=f'../../db_stores/doc_agent_summary_index/idx_{i}', service_context=service_context)
@@ -90,11 +92,11 @@ def build_doc_agent_engine(similarity_top_k=2): #key_words, docs=None,
 
         #define query engines
         vector_query_engine = vector_index.as_query_engine(llm=llm)
-        vector_query_engine.update_prompts({'response_synthesizer:text_qa_template': new_vector_tmpl})
+
         
         #kw_query_engine = kw_index.as_query_engine()
         list_query_engine = summary_index.as_query_engine(llm=llm)
-        list_query_engine.update_prompts({'response_synthesizer:text_qa_template': new_vector_tmpl})
+
 
         #define tools
         query_engine_tools = [
@@ -103,7 +105,7 @@ def build_doc_agent_engine(similarity_top_k=2): #key_words, docs=None,
                 metadata=ToolMetadata(
                     name="vector_tool",
                     description=(
-                        f"Useful for retrieving specific context from {fn}"
+                        f"Useful for retrieving specific context from {kw}"
                     )
                 )
             ),
@@ -113,7 +115,7 @@ def build_doc_agent_engine(similarity_top_k=2): #key_words, docs=None,
                 metadata=ToolMetadata(
                     name="summary_tool",
                     description=(
-                        f"Useful for summarization-wise questions about {fn}"
+                        f"Useful for summarization-wise questions related to {kw}"
                     )
                 )
             )
@@ -126,32 +128,30 @@ def build_doc_agent_engine(similarity_top_k=2): #key_words, docs=None,
             llm=llm,
             embed_model=embed_model,
             verbose=True,
-            
+            #output_parser=output_parser, 
             
             system_prompt=f"""\
                 Make sure to respond in Chinese.
 
                 You must ALWAYS use at least one of the tools provided when answering a question; do NOT rely on prior knowledge.
-
-                Please refer to the summary_tool first if you inquire summarization-wise questions about{mappings[fn]},
-
-                If you need to fetch details about {mappings[fn]}, please refer to the vector_tool first.
+                Please refer to the summary_tool first if you inquire summarization-wise questions about {kw}
+                If you need to fetch details about {kw}, please refer to the vector_tool first.
                 """,
-        )
-        agents[fn] = agent
+        )#ReActAgent
+        agents[kw] = agent
     
     
         ##Build Composable Retriever over the agents
         #define top-level nodes
         instru =(
-            f"This content contains instructions on safety practice regarding {mappings[fn]}, "
-            f"Use this index if you need to look up specific facts about {mappings[fn]}, "
-            f"Do not use this index if you want to analyze aspects beyond {mappings[fn]} "
-
+            "This content contains some introduction to The Legend of Zelda: Tears of the Kingdom"
+             "on the following aspect {kw}, "
+            f"Use this index if you need to look up specific facts about {kw}, "
+            f"Do not use this index if you want to analyze aspects beyond {kw} "
         )
 
         node = IndexNode(
-            text=instru, index_id=fn, obj= agent
+            text=instru, index_id=kw, obj= agent
             )
         nodes.append(node)
     

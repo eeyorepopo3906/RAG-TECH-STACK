@@ -5,8 +5,8 @@ import re
 import pandas as pd
 import numpy as np
 from typing import List
-import sys
-sys.path.append("..")
+
+
 from data_loader.splitting import text_2_Document
 from data_loader.chunking import chunk_docs_standalone
 
