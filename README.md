@@ -13,4 +13,10 @@
 
 
 
-## Descriptions: TBA
+## Docker
+1. git clone repo and cd into it 
+2. copy your `m3e-base` model to `models/`
+3. fill `<OPENAI-API-KEY>` with your own key in the `.env` file under `/src/streamlit-web`
+4. `docker build -t my-image-name .`
+5. `docker run -p 8501:8501 my-image-name`
+6. visit localhost:8501
