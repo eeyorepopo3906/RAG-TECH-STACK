@@ -13,7 +13,7 @@
 
 
 
-## Docker
+## Deploy using Docker
 1. git clone repo and cd into it 
 2. copy your `m3e-base` model to `models/`
 3. fill `<OPENAI-API-KEY>` with your own key in the `.env` file under `/src/streamlit-web`
