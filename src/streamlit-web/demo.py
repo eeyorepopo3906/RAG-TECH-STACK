@@ -2,8 +2,15 @@ import warnings
 warnings.filterwarnings('ignore')
 import streamlit as st
 
+import os
+#st.write(os.getcwd())
+
+os.chdir(os.path.dirname(os.path.abspath(__file__)))
+
+
 import sys
 sys.path.append("..")
+
 from nebula_graph.text_2_graph import df_to_fig, extract_triplets, get_response_n_kg_rel_query
 ################Import Modules##################
 from engine_types import table, document_agent, kgi
@@ -12,7 +19,7 @@ from document_agent_engine import build_doc_agent_engine
 from graph_rag_engine import build_graph_rag_engine
 ################################################
 from dotenv import load_dotenv
-import os, io, sys, traceback
+import io, sys, traceback
 import time
 
 

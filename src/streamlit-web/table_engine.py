@@ -2,6 +2,12 @@
 import warnings
 warnings.filterwarnings('ignore')
 import streamlit as st
+
+import os
+#st.write(os.getcwd())
+
+os.chdir(os.path.dirname(os.path.abspath(__file__)))
+
 import sys
 sys.path.append("..")
 
