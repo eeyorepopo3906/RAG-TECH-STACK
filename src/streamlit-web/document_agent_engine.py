@@ -150,6 +150,7 @@ def build_doc_agent_engine(similarity_top_k=2): #key_words, docs=None,
         ##Build Composable Retriever over the agents
         #define top-level nodes
         instru =(
+            "Make sure to respond in English."
             "This content contains some introduction to The Legend of Zelda: Tears of the Kingdom"
              "on the following aspect {kw}, "
             f"Use this index if you need to look up specific facts about {kw}, "
