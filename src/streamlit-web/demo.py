@@ -84,18 +84,18 @@ def execute_with_timeout(function, timeout=20):
 
 
 with st.sidebar:
-    st.image("The_Legend_of_Zelda_Tears_of_the_Kingdom_cover.jpg")
+    st.image("nfdw-cover.jpg")
     st.markdown(
         "### 主要参数说明 \n"
         "1. LLM: gpt-3.5-turbo \n"
-        "2. Embeddings: moka-ai/m3e-base"
+        "2. Embeddings: m3e-base"
         "`(适用场景：中文为主、少量英文｜不适合代码检索场景)`\n"
-        "3. Document(s): 《塞尔达王国之泪》(自制)\n"
+        "3. Document(s): 《中国南方电网电力安全工作规程-第3部分》\n"
 
 
     )
 
-st.header("Check out about the Legend of Zelda: Tears of the Kingdom:books:")
+st.header("查阅关于《电力安全工作规程-第3部分》:books:")
 
 
 

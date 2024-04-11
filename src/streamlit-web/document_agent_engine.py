@@ -55,7 +55,7 @@ logger = logging.getLogger(__name__)
 
 
 #format md as DF
-df = split_by_md_headers('../../data/RAG-塞尔达王国之泪材料.md')
+df = split_by_md_headers('../../data/第三部分.md')
 #construct node mappings
 key_words, docs = MDDF(df, [1]).construct_node_mappings(show_progress=False)#remove useless contents
 
@@ -138,7 +138,7 @@ def build_doc_agent_engine(similarity_top_k=2): #key_words, docs=None,
             #output_parser=output_parser, 
             
             system_prompt=f"""\
-                Make sure to respond in English.
+                Make sure to respond in Chinese.
 
                 You must ALWAYS use at least one of the tools provided when answering a question; do NOT rely on prior knowledge.
                 Please refer to the summary_tool first if you inquire summarization-wise questions about {kw}
@@ -151,8 +151,8 @@ def build_doc_agent_engine(similarity_top_k=2): #key_words, docs=None,
         ##Build Composable Retriever over the agents
         #define top-level nodes
         instru =(
-            "Make sure to respond in English."
-            "This content contains some introduction to The Legend of Zelda: Tears of the Kingdom"
+            "Make sure to respond in Chinese."
+            "This content contains some introduction to Electric Power Safety Work Procedures of China Southern Power Grid Co., Ltd., Part 3: Special Operations Content"
              "on the following aspect {kw}, "
             f"Use this index if you need to look up specific facts about {kw}, "
             f"Do not use this index if you want to analyze aspects beyond {kw} "

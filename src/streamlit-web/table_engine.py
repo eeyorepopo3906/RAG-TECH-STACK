@@ -58,10 +58,6 @@ def build_table_n_text_engine():
     #service_context = ServiceContext.from_defaults(llm=llm, embed_model=embed_model)
 
 
-
-
-
-
     logger.info('rebuilding storage context from disk...')
     #rebuild storage context from disk
     table_index = rebuild_index("../../db_stores/table_index")
@@ -103,17 +99,17 @@ def build_table_n_text_engine():
     # build agent
     agent = OpenAIAgent.from_tools(
         query_engine_tools,
-        max_function_calls=3,
+        max_function_calls=1,
         verbose=True,
         system_prompt=f"""\
-            Respond in English.
-            
+            Respond in Chinese only.
+        
             If you inquire general-purpose questions, refer to the text_tool as a priority.
             For questions involving numbers and figures, refer to the table_tool first.
             If you need to analyze problems demanding a higher degree of rigorous reasoning, such as step-by-step instructions, 
             please utilize both the text_tool and table_tool to synthesize your answer.
             
-            You must ALWAYS use at least one of the tools provided when answering a question; do NOT rely on prior knowledge.\
+            You must ALWAYS use at least one of the text_tool or table_tool provided when answering a question; do NOT rely on prior knowledge.\
             """,
     )
 
